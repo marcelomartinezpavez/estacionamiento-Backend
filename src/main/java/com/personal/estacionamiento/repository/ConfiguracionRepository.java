@@ -2,6 +2,7 @@ package com.personal.estacionamiento.repository;
 
 import com.personal.estacionamiento.dto.ConfiguracionDto;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -16,5 +17,9 @@ public interface ConfiguracionRepository extends JpaRepository<ConfiguracionDto,
     Optional<ConfiguracionDto> findByEmpresaId(Long idEmpresa);
 
     Optional<ConfiguracionDto> findByEstacionamientoId(Long idEstacionamiento);
+
+    @Query(value = "select * from configuracion e where e.estacionamiento_id = :idEstacionamiento", nativeQuery = true)
+    ConfiguracionDto existConfiguracionForEstacionamiento(Long idEstacionamiento);
+
 
 }

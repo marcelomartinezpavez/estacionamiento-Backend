@@ -24,6 +24,13 @@ public class ConfiguracionController {
         return configuracionService.getAll();
     }
 
+    @GetMapping(path = "/exist/{id}", produces = "application/json")
+    @CrossOrigin(origins = "*")
+    public @ResponseBody
+    ResponseEntity existConfiguracion(@PathVariable("id") Long id) {
+        return configuracionService.existConfiguracionForEstacionamiento(id);
+    }
+
     @GetMapping(path = "/empresa/{idempresa}", produces = "application/json")
     @CrossOrigin(origins = "*")
     public @ResponseBody

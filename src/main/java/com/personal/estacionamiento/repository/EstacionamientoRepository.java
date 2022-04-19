@@ -13,7 +13,7 @@ public interface EstacionamientoRepository extends JpaRepository<Estacionamiento
 
 
     //Obtener estacionamiento por empresa
-    @Query(value = "select * from estacionamiento e where e.empresa.id = :idEmpresa", nativeQuery = true)
+    @Query(value = "select * from estacionamiento e where e.empresa_id = :idEmpresa", nativeQuery = true)
     List<EstacionamientoDto> findByEmpresa(Long idEmpresa);
 
 }
