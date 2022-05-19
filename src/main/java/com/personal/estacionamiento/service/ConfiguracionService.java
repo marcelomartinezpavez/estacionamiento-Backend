@@ -16,6 +16,6 @@ public interface ConfiguracionService {
 
     ResponseEntity deleteConfiguration(ConfiguracionDto newConfiguracion);
 
-    ResponseEntity existConfiguracionForEstacionamiento(long id);
+    ResponseEntity existConfiguracionForEmpresa(long id);
 
 }

@@ -28,7 +28,7 @@ public class ConfiguracionController {
     @CrossOrigin(origins = "*")
     public @ResponseBody
     ResponseEntity existConfiguracion(@PathVariable("id") Long id) {
-        return configuracionService.existConfiguracionForEstacionamiento(id);
+        return configuracionService.existConfiguracionForEmpresa(id);
     }
 
     @GetMapping(path = "/empresa/{idempresa}", produces = "application/json")

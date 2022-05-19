@@ -18,8 +18,8 @@ public interface ConfiguracionRepository extends JpaRepository<ConfiguracionDto,
 
     Optional<ConfiguracionDto> findByEstacionamientoId(Long idEstacionamiento);
 
-    @Query(value = "select * from configuracion e where e.estacionamiento_id = :idEstacionamiento", nativeQuery = true)
-    ConfiguracionDto existConfiguracionForEstacionamiento(Long idEstacionamiento);
+    @Query(value = "select * from configuracion e where e.empresa_id = :idEmpresa", nativeQuery = true)
+    ConfiguracionDto existConfiguracionForEmpresa(Long idEmpresa);
 
 
 }

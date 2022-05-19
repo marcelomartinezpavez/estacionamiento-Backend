@@ -178,9 +178,6 @@ public class EstacionamientoController {
         //return new ResponseEntity("Error Interno al asignar estacionamiento", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
-
-
     @PostMapping(path = "/insert",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)

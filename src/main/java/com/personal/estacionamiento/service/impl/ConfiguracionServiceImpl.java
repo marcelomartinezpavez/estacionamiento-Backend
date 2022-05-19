@@ -94,8 +94,8 @@ public class ConfiguracionServiceImpl implements ConfiguracionService {
         return new ResponseEntity(newConfiguracion, HttpStatus.OK);
     }
 
-    public ResponseEntity existConfiguracionForEstacionamiento(long id){
-        ConfiguracionDto configuracionDto = configuracionRepository.existConfiguracionForEstacionamiento(id);
+    public ResponseEntity existConfiguracionForEmpresa(long id){
+        ConfiguracionDto configuracionDto = configuracionRepository.existConfiguracionForEmpresa(id);
         return new ResponseEntity(configuracionDto, HttpStatus.OK);
     }
 
