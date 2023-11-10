@@ -16,4 +16,7 @@ public interface EstacionadoRepository extends JpaRepository<EstacionadoDto, Lon
     @Query(value = "select * from estacionado e where e.patente = :patente and e.estado = :estado", nativeQuery = true)
     Optional<EstacionadoDto> findByPatenteAndEstado(String patente, int estado);
 
+    @Query(value = "select * from estacionado e where e.estacionamiento_id = :idEstacionamiento", nativeQuery = true)
+    List<EstacionadoDto> findByIdEstacionamiento(long idEstacionamiento);
+
 }
