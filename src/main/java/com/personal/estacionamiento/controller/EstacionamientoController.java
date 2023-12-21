@@ -5,6 +5,8 @@ import com.personal.estacionamiento.repository.*;
 import com.personal.estacionamiento.request.EstacionadoRequest;
 import com.personal.estacionamiento.request.EstacionamientoRequest;
 import com.personal.estacionamiento.util.EstadoEstacionado;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,14 +16,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("estacionamiento")
 public class EstacionamientoController {
 
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     @Autowired
     EmpresaRepository empresaRepository;
 
@@ -83,8 +89,6 @@ public class EstacionamientoController {
                 if (ocupados > totalEstacionamiento) {
                     return new ResponseEntity("No hay mas espacio en el estacionamiento", HttpStatus.BAD_REQUEST);
                 }
-
-
                 estacionamientoRepository.save(estacionamientoDto);
 
                 estacionadoDto.setEstacionamiento(estacionamientoDto);
@@ -93,9 +97,16 @@ public class EstacionamientoController {
 
             estacionadoDto.setEstado(EstadoEstacionado.OCUPADO.ordinal());
             estacionadoDto.setEstacionamientoId(estacionadoRequest.getEstacionamiento_id());
-
+            LOGGER.info("Ingresando vehiculo");
             LocalDateTime localDateTime = LocalDateTime.now();
-            Timestamp timestamp = Timestamp.valueOf(localDateTime);
+            LOGGER.info("localDateTime: {}",localDateTime);
+            ZonedDateTime zonedUTC = localDateTime.atZone(ZoneId.of("UTC"));
+            LOGGER.info("zonedUTC: {}",zonedUTC);
+            //ZonedDateTime zonedIST = zonedUTC.withZoneSameInstant(ZoneId.of("America/Santiago"));
+            //LOGGER.info("zonedIST: {}",zonedIST);
+            Timestamp timestamp = Timestamp.valueOf(zonedUTC.toLocalDateTime());
+            //zonedUTC.toLocalDateTime()
+            LOGGER.info("timestamp: {}",timestamp);
             estacionadoDto.setFechaIngreso(timestamp);
             estacionadoRepository.save(estacionadoDto);
             return new ResponseEntity(estacionadoDto, HttpStatus.OK);
@@ -103,7 +114,6 @@ public class EstacionamientoController {
             return new ResponseEntity("Error Interno al asignar estacionamiento", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     @PostMapping(value = "/insert/pago", produces = "application/json")
     @CrossOrigin(origins = "*")
@@ -123,8 +133,6 @@ public class EstacionamientoController {
 
                     if (estacionadoDtoOptional.isPresent()) {
 
-
-                        //int totalEstacionamiento = estacionamientoDto.getCantidadTotal();
                         int ocupados = estacionamientoDto.getCantidadOcupado() -1;
                         int libres = estacionamientoDto.getCantidadLibre() + 1;
                         estacionamientoDto.setCantidadOcupado(ocupados);
@@ -136,16 +144,25 @@ public class EstacionamientoController {
 
                         EstacionadoDto estacionadoDto = estacionadoDtoOptional.get();
                         estacionadoDto.setEstado(EstadoEstacionado.PAGADO.ordinal());
-                        //estacionadoDto.setEstacionamientoId(estacionadoRequest.getEstacionamiento_id());
-
+                        LOGGER.info("sacando vehiculo");
                         LocalDateTime localDateTime = LocalDateTime.now();
-                        Timestamp timestamp = Timestamp.valueOf(localDateTime);
+                        LOGGER.info("localDateTime: {}",localDateTime);
+                        ZonedDateTime zonedUTC = localDateTime.atZone(ZoneId.of("UTC"));
+                        LOGGER.info("zonedUTC: {}",zonedUTC);
+                        //ZonedDateTime zonedIST = zonedUTC.withZoneSameInstant(ZoneId.of("America/Santiago"));
+                        Timestamp timestamp = Timestamp.valueOf(zonedUTC.toLocalDateTime());
+                        LOGGER.info("timestamp: {}",timestamp);
                         estacionadoDto.setFechaSalida(timestamp);
 
                         long diferencia = timestamp.getTime() - estacionadoDto.getFechaIngreso().getTime();
                         long minutos = TimeUnit.MILLISECONDS.toMinutes(diferencia);
 
-                        long total = valorMinuto * minutos;
+                        long total = 0;
+                        if(configuracionDto.getTiempoMinimoMinutos() >= minutos){
+                            total = configuracionDto.getValorMinimo();
+                        }else {
+                            total = valorMinuto * minutos;
+                        }
 
                         estacionadoDto.setValorTotal(total);
 
@@ -162,20 +179,10 @@ public class EstacionamientoController {
                 return new ResponseEntity("No se obtuvo estacionamiento", HttpStatus.BAD_REQUEST);
             }
 
-
-            //if (estacionamientoDtoOptional.isPresent()) {
-            //    EstacionamientoDto estacionamientoDto = estacionamientoDtoOptional.get();
-            //    estacionadoDto.setEstacionamiento(estacionamientoDto);
-            //}
-
-            //estacionadoDto.setPatente(estacionadoRequest.getPatente());
-
-
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity("Error Interno al asignar estacionamiento", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        //return new ResponseEntity("Error Interno al asignar estacionamiento", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping(path = "/insert",

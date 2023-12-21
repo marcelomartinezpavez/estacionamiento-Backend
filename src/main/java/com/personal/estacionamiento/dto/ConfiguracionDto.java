@@ -28,6 +28,12 @@ public class ConfiguracionDto implements Serializable {
     @Column(name = "valor_mes")
     private long valorMes;
 
+    @Column(name = "tiempo_minimo_minutos")
+    private long tiempoMinimoMinutos;
+
+    @Column(name = "valor_minimo")
+    private long valorMinimo;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id")
     private EmpresaDto empresa;
@@ -111,5 +117,21 @@ public class ConfiguracionDto implements Serializable {
 
     public void setEstacionamiento(EstacionamientoDto estacionamiento) {
         this.estacionamiento = estacionamiento;
+    }
+
+    public long getTiempoMinimoMinutos() {
+        return tiempoMinimoMinutos;
+    }
+
+    public void setTiempoMinimoMinutos(long tiempoMinimoMinutos) {
+        this.tiempoMinimoMinutos = tiempoMinimoMinutos;
+    }
+
+    public long getValorMinimo() {
+        return valorMinimo;
+    }
+
+    public void setValorMinimo(long valorMinimo) {
+        this.valorMinimo = valorMinimo;
     }
 }

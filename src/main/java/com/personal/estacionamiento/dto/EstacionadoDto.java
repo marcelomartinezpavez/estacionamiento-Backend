@@ -37,7 +37,7 @@ public class EstacionadoDto implements Serializable {
     @Column(name = "estacionamiento_id")
     private long estacionamientoId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estacionamiento")
     private EstacionamientoDto estacionamiento;
 
