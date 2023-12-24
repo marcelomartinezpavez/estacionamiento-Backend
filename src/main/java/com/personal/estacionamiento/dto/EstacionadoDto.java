@@ -17,8 +17,6 @@ public class EstacionadoDto implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    //@CreationTimestamp
-    //@Temporal(TemporalType.TIMESTAMP)
     @Column(name = "fecha_ingreso")
     private Timestamp fechaIngreso;
 
@@ -28,6 +26,9 @@ public class EstacionadoDto implements Serializable {
     @Column(name = "valor_total")
     private long valorTotal;
 
+    @Column(name = "tipo_pago")
+    private int tipoPago;
+
     @Column(name = "estado")
     private int estado;
 
@@ -36,6 +37,9 @@ public class EstacionadoDto implements Serializable {
 
     @Column(name = "estacionamiento_id")
     private long estacionamientoId;
+
+    @Column(name = "minutos_estacionado")
+    private long minutosEstacionado;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estacionamiento")
@@ -103,5 +107,21 @@ public class EstacionadoDto implements Serializable {
 
     public void setPatente(String patente) {
         this.patente = patente;
+    }
+
+    public int getTipoPago() {
+        return tipoPago;
+    }
+
+    public void setTipoPago(int tipoPago) {
+        this.tipoPago = tipoPago;
+    }
+
+    public long getMinutosEstacionado() {
+        return minutosEstacionado;
+    }
+
+    public void setMinutosEstacionado(long minutosEstacionado) {
+        this.minutosEstacionado = minutosEstacionado;
     }
 }

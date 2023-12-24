@@ -5,6 +5,8 @@ import com.personal.estacionamiento.repository.*;
 import com.personal.estacionamiento.request.EstacionadoRequest;
 import com.personal.estacionamiento.request.EstacionamientoRequest;
 import com.personal.estacionamiento.util.EstadoEstacionado;
+import com.personal.estacionamiento.util.TipoPago;
+import com.personal.estacionamiento.util.TipoVehiculo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +23,16 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("estacionamiento")
 public class EstacionamientoController {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
+    private TipoVehiculo auto = TipoVehiculo.AUTO;
+    private TipoVehiculo moto = TipoVehiculo.MOTO;
+
     @Autowired
     EmpresaRepository empresaRepository;
 
@@ -70,10 +75,18 @@ public class EstacionamientoController {
     public @ResponseBody
     ResponseEntity insertEstacionado(@RequestBody EstacionadoRequest estacionadoRequest) {
         try {
+            LOGGER.info("insert estacionado");
+            LOGGER.info("Patente: {}",estacionadoRequest.getPatente());
+            LOGGER.info("auto valid: {}",auto.isValid(estacionadoRequest.getPatente()));
+            LOGGER.info("moto valid: {}",moto.isValid(estacionadoRequest.getPatente()));
+
+            if(!auto.isValid(estacionadoRequest.getPatente()) && !moto.isValid(estacionadoRequest.getPatente())){
+                return new ResponseEntity("Patente ingresada no valida",HttpStatus.BAD_REQUEST);
+            }
             EstacionadoDto estacionadoDto = new EstacionadoDto();
             Optional<EstacionamientoDto> estacionamientoDtoOptional = estacionamientoRepository.findById(estacionadoRequest.getEstacionamiento_id());
 
-            Optional<EstacionadoDto> estacionadoDtoOptional = estacionadoRepository.findByPatenteAndEstado(estacionadoRequest.getPatente(), EstadoEstacionado.OCUPADO.ordinal());
+            Optional<EstacionadoDto> estacionadoDtoOptional = estacionadoRepository.findByPatenteAndEstado(estacionadoRequest.getPatente().trim(), EstadoEstacionado.OCUPADO.ordinal());
 
             if (estacionadoDtoOptional.isPresent()) {
                 return new ResponseEntity("El vehiculo ya se encuentra estacionado", HttpStatus.BAD_REQUEST);
@@ -93,7 +106,7 @@ public class EstacionamientoController {
 
                 estacionadoDto.setEstacionamiento(estacionamientoDto);
             }
-            estacionadoDto.setPatente(estacionadoRequest.getPatente());
+            estacionadoDto.setPatente(estacionadoRequest.getPatente().trim());
 
             estacionadoDto.setEstado(EstadoEstacionado.OCUPADO.ordinal());
             estacionadoDto.setEstacionamientoId(estacionadoRequest.getEstacionamiento_id());
@@ -102,10 +115,7 @@ public class EstacionamientoController {
             LOGGER.info("localDateTime: {}",localDateTime);
             ZonedDateTime zonedUTC = localDateTime.atZone(ZoneId.of("UTC"));
             LOGGER.info("zonedUTC: {}",zonedUTC);
-            //ZonedDateTime zonedIST = zonedUTC.withZoneSameInstant(ZoneId.of("America/Santiago"));
-            //LOGGER.info("zonedIST: {}",zonedIST);
             Timestamp timestamp = Timestamp.valueOf(zonedUTC.toLocalDateTime());
-            //zonedUTC.toLocalDateTime()
             LOGGER.info("timestamp: {}",timestamp);
             estacionadoDto.setFechaIngreso(timestamp);
             estacionadoRepository.save(estacionadoDto);
@@ -120,6 +130,9 @@ public class EstacionamientoController {
     public @ResponseBody
     ResponseEntity insertPago(@RequestBody EstacionadoRequest estacionadoRequest) {
         try {
+            if(!auto.isValid(estacionadoRequest.getPatente()) && !moto.isValid(estacionadoRequest.getPatente())){
+                return new ResponseEntity("Patente ingresada no valida",HttpStatus.BAD_REQUEST);
+            }
             Optional<EstacionamientoDto> estacionamientoDtoOptional = estacionamientoRepository.findById(estacionadoRequest.getEstacionamiento_id());
 
             if (estacionamientoDtoOptional.isPresent()) {
@@ -129,7 +142,7 @@ public class EstacionamientoController {
                 if (configuracionDtoOptional.isPresent()) {
                     ConfiguracionDto configuracionDto = configuracionDtoOptional.get();
 
-                    Optional<EstacionadoDto> estacionadoDtoOptional = estacionadoRepository.findByPatenteAndEstado(estacionadoRequest.getPatente(), EstadoEstacionado.OCUPADO.ordinal());
+                    Optional<EstacionadoDto> estacionadoDtoOptional = estacionadoRepository.findByPatenteAndEstado(estacionadoRequest.getPatente().trim(), EstadoEstacionado.OCUPADO.ordinal());
 
                     if (estacionadoDtoOptional.isPresent()) {
 
@@ -143,26 +156,100 @@ public class EstacionamientoController {
                         long valorMinuto = configuracionDto.getValorMinuto();
 
                         EstacionadoDto estacionadoDto = estacionadoDtoOptional.get();
+
+                        estacionadoDto.setTipoPago(TipoPago.EFECTIVO.ordinal());
+
                         estacionadoDto.setEstado(EstadoEstacionado.PAGADO.ordinal());
                         LOGGER.info("sacando vehiculo");
                         LocalDateTime localDateTime = LocalDateTime.now();
                         LOGGER.info("localDateTime: {}",localDateTime);
                         ZonedDateTime zonedUTC = localDateTime.atZone(ZoneId.of("UTC"));
                         LOGGER.info("zonedUTC: {}",zonedUTC);
-                        //ZonedDateTime zonedIST = zonedUTC.withZoneSameInstant(ZoneId.of("America/Santiago"));
                         Timestamp timestamp = Timestamp.valueOf(zonedUTC.toLocalDateTime());
                         LOGGER.info("timestamp: {}",timestamp);
                         estacionadoDto.setFechaSalida(timestamp);
-
+                        estacionadoDto.setPatente(estacionadoDto.getPatente().trim());
                         long diferencia = timestamp.getTime() - estacionadoDto.getFechaIngreso().getTime();
                         long minutos = TimeUnit.MILLISECONDS.toMinutes(diferencia);
-
+                        estacionadoDto.setMinutosEstacionado(minutos);
                         long total = 0;
                         if(configuracionDto.getTiempoMinimoMinutos() >= minutos){
                             total = configuracionDto.getValorMinimo();
                         }else {
                             total = valorMinuto * minutos;
                         }
+
+                        estacionadoDto.setValorTotal(total);
+
+                        estacionadoRepository.save(estacionadoDto);
+                        return new ResponseEntity(estacionadoDto, HttpStatus.OK);
+                    }else{
+                        return new ResponseEntity("No se encuentra vehiculo estacionado", HttpStatus.NOT_FOUND);
+                    }
+
+                }else{
+                    return new ResponseEntity("No se obtuvo la configuracion", HttpStatus.BAD_REQUEST);
+                }
+            }else {
+                return new ResponseEntity("No se obtuvo estacionamiento", HttpStatus.BAD_REQUEST);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity("Error Interno al asignar estacionamiento", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/insert/sin/pago", produces = "application/json")
+    @CrossOrigin(origins = "*")
+    public @ResponseBody
+    ResponseEntity insertSinPago(@RequestBody EstacionadoRequest estacionadoRequest) {
+        try {
+            if(!auto.isValid(estacionadoRequest.getPatente()) && !moto.isValid(estacionadoRequest.getPatente())){
+                return new ResponseEntity("Patente ingresada no valida",HttpStatus.BAD_REQUEST);
+            }
+            Optional<EstacionamientoDto> estacionamientoDtoOptional = estacionamientoRepository.findById(estacionadoRequest.getEstacionamiento_id());
+
+            if (estacionamientoDtoOptional.isPresent()) {
+                EstacionamientoDto estacionamientoDto = estacionamientoDtoOptional.get();
+
+                Optional<ConfiguracionDto> configuracionDtoOptional = configuracionRepository.findByEstacionamientoId(estacionamientoDto.getId());
+                if (configuracionDtoOptional.isPresent()) {
+                    ConfiguracionDto configuracionDto = configuracionDtoOptional.get();
+
+                    Optional<EstacionadoDto> estacionadoDtoOptional = estacionadoRepository.findByPatenteAndEstado(estacionadoRequest.getPatente().trim(), EstadoEstacionado.OCUPADO.ordinal());
+
+                    if (estacionadoDtoOptional.isPresent()) {
+
+                        int ocupados = estacionamientoDto.getCantidadOcupado() -1;
+                        int libres = estacionamientoDto.getCantidadLibre() + 1;
+                        estacionamientoDto.setCantidadOcupado(ocupados);
+                        estacionamientoDto.setCantidadLibre(libres);
+
+                        estacionamientoRepository.save(estacionamientoDto);
+
+                        //long valorMinuto = configuracionDto.getValorMinuto();
+
+                        EstacionadoDto estacionadoDto = estacionadoDtoOptional.get();
+                        estacionadoDto.setEstado(EstadoEstacionado.FINALIZADO.ordinal());
+                        //LOGGER.info("sacando vehiculo");
+                        LocalDateTime localDateTime = LocalDateTime.now();
+                        LOGGER.info("localDateTime: {}",localDateTime);
+                        ZonedDateTime zonedUTC = localDateTime.atZone(ZoneId.of("UTC"));
+                        LOGGER.info("zonedUTC: {}",zonedUTC);
+                        Timestamp timestamp = Timestamp.valueOf(zonedUTC.toLocalDateTime());
+                        LOGGER.info("timestamp: {}",timestamp);
+                        estacionadoDto.setFechaSalida(timestamp);
+                        estacionadoDto.setPatente(estacionadoDto.getPatente().trim());
+                        long diferencia = timestamp.getTime() - estacionadoDto.getFechaIngreso().getTime();
+                        long minutos = TimeUnit.MILLISECONDS.toMinutes(diferencia);
+                        estacionadoDto.setMinutosEstacionado(minutos);
+                        long total = 0;
+                        //if(configuracionDto.getTiempoMinimoMinutos() >= minutos){
+                        //    total = configuracionDto.getValorMinimo();
+                        //}else {
+                        //    total = valorMinuto * minutos;
+                        //}
 
                         estacionadoDto.setValorTotal(total);
 

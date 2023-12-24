@@ -1,6 +1,5 @@
 package com.personal.estacionamiento.controller;
 
-import com.personal.estacionamiento.dto.ConfiguracionDto;
 import com.personal.estacionamiento.dto.EmpresaDto;
 import com.personal.estacionamiento.dto.EstacionadoDto;
 import com.personal.estacionamiento.dto.EstacionamientoDto;
@@ -16,21 +15,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequestMapping("estacionado")
@@ -72,8 +63,6 @@ public class EstacionadoController {
 
                 LOGGER.info("fecha Ingreso: {}",estacionadoDto1.getFechaIngreso());
                 LOGGER.info("fecha Salida: {}",estacionadoDto1.getFechaSalida());
-                //LocalDateTime localDateTime = LocalDateTime.now();
-                //LOGGER.info("localDateTime: {}",localDateTime);
                 if(estacionadoDto1.getFechaIngreso() !=null){
 
                     ZonedDateTime zonedUTCIngreso = estacionadoDto1.getFechaIngreso().toLocalDateTime().atZone(ZoneId.of("UTC"));
@@ -88,16 +77,8 @@ public class EstacionadoController {
                 if(estacionadoDto1.getFechaSalida() != null) {
                     ZonedDateTime zonedUTCSalida = estacionadoDto1.getFechaSalida().toLocalDateTime().atZone(ZoneId.of("UTC"));
                     LOGGER.info("zonedUTCSalida: {}", zonedUTCSalida);
-
-                    //ZonedDateTime zonedIST = zonedUTC.withZoneSameInstant(ZoneId.of("America/Santiago"));
-                    //LOGGER.info("zonedIST: {}",zonedIST);
-                    //Timestamp timestamp = Timestamp.valueOf(zonedUTC.toLocalDateTime());
-                    //zonedUTC.toLocalDateTime()
-                    //LOGGER.info("timestamp: {}",timestamp);
                     Timestamp timestampSalida = Timestamp.valueOf(zonedUTCSalida.toLocalDateTime());
                     LOGGER.info("timestampSalida: {}",timestampSalida);
-                    //estacionadoDto2.setFechaIngreso(estacionadoDto1.getFechaIngreso());
-                    //estacionadoDto2.setFechaSalida(estacionadoDto1.getFechaSalida());
                     estacionadoDto2.setFechaSalida(timestampSalida);
                 }
                 estacionadoDto2.setValorTotal(estacionadoDto1.getValorTotal());
@@ -110,23 +91,12 @@ public class EstacionadoController {
                 estacionamientoDto.setCantidadTotal(estacionadoDto1.getEstacionamiento().getCantidadTotal());
                 estacionamientoDto.setCantidadLibre(estacionadoDto1.getEstacionamiento().getCantidadLibre());
                 estacionamientoDto.setCantidadOcupado(estacionadoDto1.getEstacionamiento().getCantidadOcupado());
-                estacionamientoDto.setHabilitado(estacionadoDto1.getEstacionamiento().getHabilitado());    
-                //private Set<EstacionadoDto> estacionado;
+                estacionamientoDto.setHabilitado(estacionadoDto1.getEstacionamiento().getHabilitado());
                 EmpresaDto empresaDto = new EmpresaDto();
                 empresaDto.setId(estacionadoDto1.getEstacionamiento().getEmpresa().getId());
                 empresaDto.setDireccion(estacionadoDto1.getEstacionamiento().getEmpresa().getDireccion());
                 empresaDto.setNombre(estacionadoDto1.getEstacionamiento().getEmpresa().getNombre());
                 empresaDto.setRut(estacionadoDto1.getEstacionamiento().getEmpresa().getRut());
-
-                //@OneToMany(fetch = FetchType.EAGER)
-                //@Column(name = "estacionamientos")
-                //private Set<EstacionamientoDto> estacionamientos;
-
-                //@OneToOne
-                //@JoinColumn(name = "id_configuracion")
-                //private ConfiguracionDto id_configuracion;
-
-
                 estacionamientoDto.setEmpresa(empresaDto);
                 estacionadoDto2.setEstacionamiento(estacionamientoDto);
                 estacionadoDtoList.add(estacionadoDto2);
@@ -164,22 +134,12 @@ public class EstacionadoController {
                 estacionamientoDto.setCantidadTotal(estacionadoDto1.getEstacionamiento().getCantidadTotal());
                 estacionamientoDto.setCantidadLibre(estacionadoDto1.getEstacionamiento().getCantidadLibre());
                 estacionamientoDto.setCantidadOcupado(estacionadoDto1.getEstacionamiento().getCantidadOcupado());
-                estacionamientoDto.setHabilitado(estacionadoDto1.getEstacionamiento().getHabilitado());    
-                //private Set<EstacionadoDto> estacionado;
+                estacionamientoDto.setHabilitado(estacionadoDto1.getEstacionamiento().getHabilitado());
                 EmpresaDto empresaDto = new EmpresaDto();
                 empresaDto.setId(estacionadoDto1.getEstacionamiento().getEmpresa().getId());
                 empresaDto.setDireccion(estacionadoDto1.getEstacionamiento().getEmpresa().getDireccion());
                 empresaDto.setNombre(estacionadoDto1.getEstacionamiento().getEmpresa().getNombre());
                 empresaDto.setRut(estacionadoDto1.getEstacionamiento().getEmpresa().getRut());
-
-                //@OneToMany(fetch = FetchType.EAGER)
-                //@Column(name = "estacionamientos")
-                //private Set<EstacionamientoDto> estacionamientos;
-
-                //@OneToOne
-                //@JoinColumn(name = "id_configuracion")
-                //private ConfiguracionDto id_configuracion;
-
 
                 estacionamientoDto.setEmpresa(empresaDto);
                 estacionadoDto2.setEstacionamiento(estacionamientoDto);
