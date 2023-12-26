@@ -1,12 +1,19 @@
 package com.personal.estacionamiento.controller;
 
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfDocument;
+import com.itextpdf.text.pdf.PdfPage;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.personal.estacionamiento.dto.*;
 import com.personal.estacionamiento.repository.*;
 import com.personal.estacionamiento.request.EstacionadoRequest;
 import com.personal.estacionamiento.request.EstacionamientoRequest;
 import com.personal.estacionamiento.util.EstadoEstacionado;
+import com.personal.estacionamiento.util.PdfGenerator;
 import com.personal.estacionamiento.util.TipoPago;
 import com.personal.estacionamiento.util.TipoVehiculo;
+import org.apache.catalina.filters.ExpiresFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +21,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.Document;
+import java.awt.*;
+import java.io.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -157,8 +169,9 @@ public class EstacionamientoController {
 
                         EstacionadoDto estacionadoDto = estacionadoDtoOptional.get();
 
-                        estacionadoDto.setTipoPago(TipoPago.EFECTIVO.ordinal());
 
+                        //estacionadoDto.setTipoPago(TipoPago.EFECTIVO.ordinal());
+                        estacionadoDto.setTipoPago(estacionadoRequest.getTipoPago());
                         estacionadoDto.setEstado(EstadoEstacionado.PAGADO.ordinal());
                         LOGGER.info("sacando vehiculo");
                         LocalDateTime localDateTime = LocalDateTime.now();
@@ -317,5 +330,16 @@ public class EstacionamientoController {
         return new ResponseEntity("No se encontro el estacionamiento",HttpStatus.NOT_FOUND);
 
     }
+
+    /*public static void main(String [] args){
+
+
+        PdfGenerator generator = new PdfGenerator();
+        byte[] pdfReport = generator.getPDF().toByteArray();
+        System.out.println(pdfReport);
+
+    }*/
+
+
 
 }

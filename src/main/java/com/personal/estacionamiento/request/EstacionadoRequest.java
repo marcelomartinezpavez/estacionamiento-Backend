@@ -19,6 +19,8 @@ public class EstacionadoRequest {
     private String patente;
     private long estacionamiento_id;
 
+    private int tipoPago;
+
     public long getId() {
         return id;
     }
@@ -73,5 +75,13 @@ public class EstacionadoRequest {
 
     public void setEstacionamiento_id(long estacionamiento_id) {
         this.estacionamiento_id = estacionamiento_id;
+    }
+
+    public int getTipoPago() {
+        return tipoPago;
+    }
+
+    public void setTipoPago(int tipoPago) {
+        this.tipoPago = tipoPago;
     }
 }
