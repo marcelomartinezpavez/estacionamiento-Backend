@@ -81,6 +81,7 @@ public class EstacionadoController {
                     LOGGER.info("timestampSalida: {}",timestampSalida);
                     estacionadoDto2.setFechaSalida(timestampSalida);
                 }
+                estacionadoDto2.setTipoPago(estacionadoDto1.getTipoPago());
                 estacionadoDto2.setValorTotal(estacionadoDto1.getValorTotal());
                 estacionadoDto2.setEstado(estacionadoDto1.getEstado());
                 estacionadoDto2.setPatente(estacionadoDto1.getPatente());
@@ -124,6 +125,7 @@ public class EstacionadoController {
                 estacionadoDto2.setId(estacionadoDto1.getId());
                 estacionadoDto2.setFechaIngreso(estacionadoDto1.getFechaIngreso());
                 estacionadoDto2.setFechaSalida(estacionadoDto1.getFechaSalida());
+                estacionadoDto2.setTipoPago(estacionadoDto1.getTipoPago());
                 estacionadoDto2.setValorTotal(estacionadoDto1.getValorTotal());
                 estacionadoDto2.setEstado(estacionadoDto1.getEstado());
                 estacionadoDto2.setPatente(estacionadoDto1.getPatente());
