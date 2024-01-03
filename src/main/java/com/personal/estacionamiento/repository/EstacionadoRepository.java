@@ -21,6 +21,9 @@ public interface EstacionadoRepository extends JpaRepository<EstacionadoDto, Lon
     @Query(value = "select * from estacionado e where e.estacionamiento_id = :idEstacionamiento and fecha_ingreso between :fechaInicio and :fechaFin order by estado", nativeQuery = true)
     List<EstacionadoDto> findByIdEstacionamiento(long idEstacionamiento, Timestamp fechaInicio, Timestamp fechaFin);
 
+    @Query(value = "select * from estacionado e where e.estacionamiento_id = :idEstacionamiento and fecha_ingreso between :fechaInicio and :fechaFin and estado = 0 order by estado", nativeQuery = true)
+    List<EstacionadoDto> findByIdEstacionamientoSinPago(long idEstacionamiento, Timestamp fechaInicio, Timestamp fechaFin);
+
     @Query(value = "select * from estacionado e where e.estacionamiento_id = :idEstacionamiento order by estado", nativeQuery = true)
     List<EstacionadoDto> findAllByIdEstacionamiento(long idEstacionamiento);
 }

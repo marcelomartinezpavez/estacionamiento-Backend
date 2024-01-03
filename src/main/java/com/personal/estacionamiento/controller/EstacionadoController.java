@@ -106,6 +106,75 @@ public class EstacionadoController {
             return new ResponseEntity(estacionadoDtoList, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
+            return new ResponseEntity("Error Interno al buscar todos los estacionados del dia sin pago", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping(path = "/sin/pago/idEstacionamiento/{idEstacionamiento}", produces = "application/json")
+    @CrossOrigin(origins = "*")
+    public @ResponseBody
+    ResponseEntity getByEmpresaSinPayment(@PathVariable long idEstacionamiento) {
+        try {
+            System.out.println("get estacionados sin pago");
+            //Aquí colocas tu objeto tipo Date
+            String dateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                    .format(LocalDateTime.now());
+            String fechaInicio = dateTime +" 00:00:00";
+            String fechaFin = dateTime +" 23:59:59";
+            Timestamp ini = Timestamp.valueOf(fechaInicio);
+            Timestamp fin = Timestamp.valueOf(fechaFin);
+            List<EstacionadoDto> estacionadoDto = estacionadoRepository.findByIdEstacionamientoSinPago(idEstacionamiento, ini, fin);
+            List<EstacionadoDto> estacionadoDtoList = new ArrayList<>();
+            for (EstacionadoDto estacionadoDto1 : estacionadoDto){
+                EstacionadoDto estacionadoDto2 = new EstacionadoDto();
+                estacionadoDto2.setId(estacionadoDto1.getId());
+
+                if(estacionadoDto1.getFechaIngreso() !=null){
+
+                    ZonedDateTime zonedUTCIngreso = estacionadoDto1.getFechaIngreso().toLocalDateTime().atZone(ZoneId.of("UTC"));
+
+                    Timestamp timestampIngreso = Timestamp.valueOf(zonedUTCIngreso.toLocalDateTime());
+
+                    estacionadoDto2.setFechaIngreso(timestampIngreso);
+
+                }
+
+                if(estacionadoDto1.getFechaSalida() != null) {
+                    ZonedDateTime zonedUTCSalida = estacionadoDto1.getFechaSalida().toLocalDateTime().atZone(ZoneId.of("UTC"));
+
+                    Timestamp timestampSalida = Timestamp.valueOf(zonedUTCSalida.toLocalDateTime());
+
+                    estacionadoDto2.setFechaSalida(timestampSalida);
+                }
+
+                LOGGER.info("TIPO PAGO: {}", estacionadoDto1.getTipoPago());
+                estacionadoDto2.setTipoPago(estacionadoDto1.getTipoPago());
+                estacionadoDto2.setValorTotal(estacionadoDto1.getValorTotal());
+                estacionadoDto2.setMinutosEstacionado(estacionadoDto1.getMinutosEstacionado());
+                estacionadoDto2.setEstado(estacionadoDto1.getEstado());
+                estacionadoDto2.setPatente(estacionadoDto1.getPatente());
+                estacionadoDto2.setEstacionamientoId(estacionadoDto1.getEstacionamientoId());
+
+                EstacionamientoDto estacionamientoDto = new EstacionamientoDto();
+                estacionamientoDto.setId(estacionadoDto1.getEstacionamiento().getId());
+                estacionamientoDto.setCantidadTotal(estacionadoDto1.getEstacionamiento().getCantidadTotal());
+                estacionamientoDto.setCantidadLibre(estacionadoDto1.getEstacionamiento().getCantidadLibre());
+                estacionamientoDto.setCantidadOcupado(estacionadoDto1.getEstacionamiento().getCantidadOcupado());
+                estacionamientoDto.setHabilitado(estacionadoDto1.getEstacionamiento().getHabilitado());
+                EmpresaDto empresaDto = new EmpresaDto();
+                empresaDto.setId(estacionadoDto1.getEstacionamiento().getEmpresa().getId());
+                empresaDto.setDireccion(estacionadoDto1.getEstacionamiento().getEmpresa().getDireccion());
+                empresaDto.setNombre(estacionadoDto1.getEstacionamiento().getEmpresa().getNombre());
+                empresaDto.setRut(estacionadoDto1.getEstacionamiento().getEmpresa().getRut());
+                estacionamientoDto.setEmpresa(empresaDto);
+                estacionadoDto2.setEstacionamiento(estacionamientoDto);
+                estacionadoDtoList.add(estacionadoDto2);
+
+            }
+            return new ResponseEntity(estacionadoDtoList, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity("Error Interno al buscar todos los estacionados del dia", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
