@@ -1,5 +1,5 @@
 package com.personal.estacionamiento.util;
 
 public enum EstadoEstacionado {
-    OCUPADO, PAGADO, FINALIZADO;
+    OCUPADO, PAGADO, CANCELADO;
 }

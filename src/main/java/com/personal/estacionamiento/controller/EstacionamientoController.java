@@ -1,19 +1,14 @@
 package com.personal.estacionamiento.controller;
 
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfDocument;
-import com.itextpdf.text.pdf.PdfPage;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfWriter;
 import com.personal.estacionamiento.dto.*;
 import com.personal.estacionamiento.repository.*;
 import com.personal.estacionamiento.request.EstacionadoRequest;
 import com.personal.estacionamiento.request.EstacionamientoRequest;
+import com.personal.estacionamiento.response.EstacionadoResponse;
+import com.personal.estacionamiento.response.EstacionamientoResponse;
 import com.personal.estacionamiento.util.EstadoEstacionado;
 import com.personal.estacionamiento.util.PdfGenerator;
-import com.personal.estacionamiento.util.TipoPago;
 import com.personal.estacionamiento.util.TipoVehiculo;
-import org.apache.catalina.filters.ExpiresFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.swing.text.Document;
-import java.awt.*;
 import java.io.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -137,6 +128,35 @@ public class EstacionamientoController {
         }
     }
 
+    @PutMapping(value = "/update/estacionado", produces = "application/json")
+    @CrossOrigin(origins = "*")
+    public @ResponseBody
+    ResponseEntity updateEstacionado(@RequestBody EstacionadoRequest estacionadoRequest) {
+        try {
+            LOGGER.info("update estacionado");
+
+
+            Optional<EstacionadoDto> estacionadoDtoOptional = estacionadoRepository.findById(estacionadoRequest.getId());
+
+
+            if (!estacionadoDtoOptional.isPresent()) {
+
+                return new ResponseEntity("El vehiculo no se encuentra", HttpStatus.BAD_REQUEST);
+            }
+
+            if (estacionadoDtoOptional.isPresent()) {
+                EstacionadoDto estacionadoDto = estacionadoDtoOptional.get();
+                estacionadoDto.setTipoPago(estacionadoRequest.getTipoPago());
+                estacionadoRepository.save(estacionadoDto);
+                return new ResponseEntity(estacionadoDto, HttpStatus.OK);
+
+            }
+        } catch (Exception e) {
+            return new ResponseEntity("Error Interno al asignar estacionamiento", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return null;
+    }
+
     @PostMapping(value = "/insert/pago", produces = "application/json")
     @CrossOrigin(origins = "*")
     public @ResponseBody
@@ -194,8 +214,28 @@ public class EstacionamientoController {
 
                         estacionadoDto.setValorTotal(total);
 
+                        EstacionadoResponse estacionadoResponse = new EstacionadoResponse();
+
+                        EstacionamientoResponse estacionamientoResponse = new EstacionamientoResponse();
+                        estacionamientoResponse.setId(estacionamientoDto.getId());
+                        estacionamientoResponse.setCantidadLibre(estacionamientoDto.getCantidadLibre());
+                        estacionamientoResponse.setCantidadTotal(estacionamientoDto.getCantidadTotal());
+                        estacionamientoResponse.setCantidadOcupado(estacionamientoDto.getCantidadOcupado());
+                        estacionamientoResponse.setHabilitado(estacionamientoDto.getHabilitado());
+
+                        estacionadoResponse.setId(estacionadoDto.getId());
+                        estacionadoResponse.setFechaIngreso(estacionadoDto.getFechaIngreso());
+                        estacionadoResponse.setFechaSalida(estacionadoDto.getFechaSalida());
+                        estacionadoResponse.setValorTotal(estacionadoDto.getValorTotal());
+                        estacionadoResponse.setTipoPago(estacionadoDto.getTipoPago());
+                        estacionadoResponse.setEstado(estacionadoDto.getEstado());
+                        estacionadoResponse.setPatente(estacionadoDto.getPatente());
+                        estacionadoResponse.setEstacionamientoId(estacionadoDto.getEstacionamientoId());
+                        estacionadoResponse.setMinutosEstacionado(estacionadoDto.getMinutosEstacionado());
+                        estacionadoResponse.setEstacionamiento(estacionamientoResponse);
+
                         estacionadoRepository.save(estacionadoDto);
-                        return new ResponseEntity(estacionadoDto, HttpStatus.OK);
+                        return new ResponseEntity(estacionadoResponse, HttpStatus.OK);
                     }else{
                         return new ResponseEntity("No se encuentra vehiculo estacionado", HttpStatus.NOT_FOUND);
                     }
@@ -212,6 +252,8 @@ public class EstacionamientoController {
             return new ResponseEntity("Error Interno al asignar estacionamiento", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 
     @PostMapping(value = "/insert/sin/pago", produces = "application/json")
     @CrossOrigin(origins = "*")
@@ -244,7 +286,7 @@ public class EstacionamientoController {
                         //long valorMinuto = configuracionDto.getValorMinuto();
 
                         EstacionadoDto estacionadoDto = estacionadoDtoOptional.get();
-                        estacionadoDto.setEstado(EstadoEstacionado.FINALIZADO.ordinal());
+                        estacionadoDto.setEstado(EstadoEstacionado.CANCELADO.ordinal());
                         //LOGGER.info("sacando vehiculo");
                         LocalDateTime localDateTime = LocalDateTime.now();
                         LOGGER.info("localDateTime: {}",localDateTime);
@@ -331,15 +373,35 @@ public class EstacionamientoController {
 
     }
 
-    /*public static void main(String [] args){
+    /*
+    public static void main(String [] args){
 
 
         PdfGenerator generator = new PdfGenerator();
         byte[] pdfReport = generator.getPDF().toByteArray();
         System.out.println(pdfReport);
+        OutputStream out = null;
 
-    }*/
+            try {
+                out = new FileOutputStream("out.pdf");
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
 
+            try {
+                out.write(pdfReport);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                out.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+
+        }
+        */
 
 
 }
