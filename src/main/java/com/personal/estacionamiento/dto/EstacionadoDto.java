@@ -11,7 +11,11 @@ import java.util.Date;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity
-@Table(name = "estacionado")
+@Table(name = "estacionado", indexes = {
+        @Index(name = "fn_index", columnList = "estado"),
+        @Index(name = "mulitIndex1", columnList = "estacionamiento_id, fecha_ingreso, fecha_salida"),
+        @Index(name = "mulitIndex2", columnList = "fecha_ingreso, fecha_salida")
+})
 public class EstacionadoDto implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
