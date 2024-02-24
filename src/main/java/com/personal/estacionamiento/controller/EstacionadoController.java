@@ -86,7 +86,8 @@ public class EstacionadoController {
                 estacionadoDto2.setEstado(estacionadoDto1.getEstado());
                 estacionadoDto2.setPatente(estacionadoDto1.getPatente());
                 estacionadoDto2.setEstacionamientoId(estacionadoDto1.getEstacionamientoId());
-                
+
+                /*
                 EstacionamientoDto estacionamientoDto = new EstacionamientoDto();
                 estacionamientoDto.setId(estacionadoDto1.getEstacionamiento().getId());
                 estacionamientoDto.setCantidadTotal(estacionadoDto1.getEstacionamiento().getCantidadTotal());
@@ -101,6 +102,8 @@ public class EstacionadoController {
                 estacionamientoDto.setEmpresa(empresaDto);
                 estacionadoDto2.setEstacionamiento(estacionamientoDto);
                 estacionadoDtoList.add(estacionadoDto2);
+
+                 */
 
             }
             return new ResponseEntity(estacionadoDtoList, HttpStatus.OK);
@@ -155,7 +158,7 @@ public class EstacionadoController {
                 estacionadoDto2.setEstado(estacionadoDto1.getEstado());
                 estacionadoDto2.setPatente(estacionadoDto1.getPatente());
                 estacionadoDto2.setEstacionamientoId(estacionadoDto1.getEstacionamientoId());
-
+/*
                 EstacionamientoDto estacionamientoDto = new EstacionamientoDto();
                 estacionamientoDto.setId(estacionadoDto1.getEstacionamiento().getId());
                 estacionamientoDto.setCantidadTotal(estacionadoDto1.getEstacionamiento().getCantidadTotal());
@@ -170,6 +173,8 @@ public class EstacionadoController {
                 estacionamientoDto.setEmpresa(empresaDto);
                 estacionadoDto2.setEstacionamiento(estacionamientoDto);
                 estacionadoDtoList.add(estacionadoDto2);
+
+ */
 
             }
             return new ResponseEntity(estacionadoDtoList, HttpStatus.OK);
@@ -202,7 +207,7 @@ public class EstacionadoController {
                 estacionadoDto2.setMinutosEstacionado(estacionadoDto1.getMinutosEstacionado());
                 estacionadoDto2.setPatente(estacionadoDto1.getPatente());
                 estacionadoDto2.setEstacionamientoId(estacionadoDto1.getEstacionamientoId());
-                
+                /*
                 EstacionamientoDto estacionamientoDto = new EstacionamientoDto();
                 estacionamientoDto.setId(estacionadoDto1.getEstacionamiento().getId());
                 estacionamientoDto.setCantidadTotal(estacionadoDto1.getEstacionamiento().getCantidadTotal());
@@ -218,6 +223,8 @@ public class EstacionadoController {
                 estacionamientoDto.setEmpresa(empresaDto);
                 estacionadoDto2.setEstacionamiento(estacionamientoDto);
                 estacionadoDtoList.add(estacionadoDto2);
+
+                 */
 
             }
             return new ResponseEntity(estacionadoDtoList, HttpStatus.OK);
@@ -271,7 +278,7 @@ public class EstacionadoController {
                 estacionadoDto2.setEstado(estacionadoDto1.getEstado());
                 estacionadoDto2.setPatente(estacionadoDto1.getPatente());
                 estacionadoDto2.setEstacionamientoId(estacionadoDto1.getEstacionamientoId());
-
+/*
                 EstacionamientoDto estacionamientoDto = new EstacionamientoDto();
                 estacionamientoDto.setId(estacionadoDto1.getEstacionamiento().getId());
                 estacionamientoDto.setCantidadTotal(estacionadoDto1.getEstacionamiento().getCantidadTotal());
@@ -286,6 +293,8 @@ public class EstacionadoController {
                 estacionamientoDto.setEmpresa(empresaDto);
                 estacionadoDto2.setEstacionamiento(estacionamientoDto);
                 estacionadoDtoList.add(estacionadoDto2);
+
+ */
 
             }
             return new ResponseEntity(estacionadoDtoList, HttpStatus.OK);

@@ -14,7 +14,10 @@ import java.util.Date;
 @Table(name = "estacionado", indexes = {
         @Index(name = "fn_index", columnList = "estado"),
         @Index(name = "mulitIndex1", columnList = "estacionamiento_id, fecha_ingreso, fecha_salida"),
-        @Index(name = "mulitIndex2", columnList = "fecha_ingreso, fecha_salida")
+        @Index(name = "mulitIndex2", columnList = "fecha_ingreso, fecha_salida"),
+        @Index(name = "fechaIngresoIndex", columnList = "fecha_ingreso"),
+        @Index(name = "fechaIngresoEstadoIndex", columnList = "fecha_ingreso, estado")
+
 })
 public class EstacionadoDto implements Serializable {
     @Id
