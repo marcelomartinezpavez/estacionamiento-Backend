@@ -101,9 +101,11 @@ public class EstacionadoController {
                 empresaDto.setRut(estacionadoDto1.getEstacionamiento().getEmpresa().getRut());
                 estacionamientoDto.setEmpresa(empresaDto);
                 estacionadoDto2.setEstacionamiento(estacionamientoDto);
-                estacionadoDtoList.add(estacionadoDto2);
+
 
                  */
+
+                estacionadoDtoList.add(estacionadoDto2);
 
             }
             return new ResponseEntity(estacionadoDtoList, HttpStatus.OK);
@@ -172,10 +174,9 @@ public class EstacionadoController {
                 empresaDto.setRut(estacionadoDto1.getEstacionamiento().getEmpresa().getRut());
                 estacionamientoDto.setEmpresa(empresaDto);
                 estacionadoDto2.setEstacionamiento(estacionamientoDto);
-                estacionadoDtoList.add(estacionadoDto2);
 
  */
-
+                estacionadoDtoList.add(estacionadoDto2);
             }
             return new ResponseEntity(estacionadoDtoList, HttpStatus.OK);
         } catch (Exception e) {
@@ -225,6 +226,8 @@ public class EstacionadoController {
                 estacionadoDtoList.add(estacionadoDto2);
 
                  */
+                estacionadoDtoList.add(estacionadoDto2);
+
 
             }
             return new ResponseEntity(estacionadoDtoList, HttpStatus.OK);
@@ -292,10 +295,10 @@ public class EstacionadoController {
                 empresaDto.setRut(estacionadoDto1.getEstacionamiento().getEmpresa().getRut());
                 estacionamientoDto.setEmpresa(empresaDto);
                 estacionadoDto2.setEstacionamiento(estacionamientoDto);
-                estacionadoDtoList.add(estacionadoDto2);
+
 
  */
-
+                estacionadoDtoList.add(estacionadoDto2);
             }
             return new ResponseEntity(estacionadoDtoList, HttpStatus.OK);
         } catch (Exception e) {
